@@ -1,87 +1,54 @@
-# MAB Sports Ballclub - Frontend
+# MAB Sports Ballclub
 
-Vue 3 + Vite single-page app for managing a basketball ballclub: owner
-dashboard, session queue management, member directory, payments, and a public
-join flow. This is the **frontend** branch of
-[adam-ctrlc/ballclub-app](https://github.com/adam-ctrlc/ballclub-app); the
-FastAPI backend lives on the [`backend`](https://github.com/adam-ctrlc/ballclub-app/tree/backend)
-branch.
+A simple web app for running a basketball ballclub. It helps whoever manages the
+club keep track of game sessions, who's playing, who has paid, and the list of
+members, all from a clean dashboard on a phone or computer.
 
-Live: https://mab-ballclub.vercel.app
+**Try it here: https://mab-ballclub.vercel.app**
 
-## Tech stack
+![The MAB Sports Ballclub sign-in screen](./screenshots/login.png)
 
-- **Vue 3** (Composition API, `<script setup>`)
-- **Vite** build tooling and dev server
-- **Vue Router 4** (auth-guarded dashboard routes + a public join route)
-- **Tailwind CSS v4** with a dark brand theme
-- **shadcn-vue** (Reka UI) components in `src/components/ui`
-- **Phosphor Icons** (`@phosphor-icons/vue`)
-- **Zod** for form validation, **Chart.js** + **vue-chartjs** for dashboard charts
-- **@internationalized/date** for the history date-range picker
+## What you can do
 
-## Prerequisites
+- **Run a game session.** Start a session, see everyone lined up in the queue,
+  and add walk-in players on the spot.
+- **Let players join themselves.** Share a link (or code) and players can request
+  to join a session from their own phone. You approve or decline each request.
+- **Track payments.** Set a fee for a session and tap each player as paid. The
+  app adds up how much has been collected and your total revenue.
+- **Keep a member list.** Save your regular players' names and phone numbers.
+  Open any member to see their history: sessions they've played and what they've paid.
+- **See the big picture.** The dashboard shows totals, recent activity, and simple
+  charts at a glance.
+- **Manage who's in charge.** Add or remove other owner accounts who can help run
+  the club.
+- **Export your data.** Download a session's list or your whole member directory
+  as a spreadsheet (CSV) whenever you need it.
 
-- Node.js 20+ and npm
-- A running instance of the backend API (see the `backend` branch)
+## How to use it
 
-## Getting started
+1. Open the app: https://mab-ballclub.vercel.app
+2. Sign in with your owner username and password.
+3. Use the menu (sidebar on a computer, bottom bar on a phone) to move between the
+   Dashboard, History, Session, Members, Owners, and Profile screens.
+4. To let players join, open a Session and share its join link. Approve requests
+   as they come in.
 
-```bash
-npm install
-cp .env.example .env      # then edit VITE_API_URL if needed
-npm run dev               # starts Vite on http://localhost:5173
-```
+That's it. Everything saves automatically.
 
-### Environment variables
+## Good to know
 
-| Variable       | Description                 | Example                     |
-| -------------- | --------------------------- | --------------------------- |
-| `VITE_API_URL` | Base URL of the backend API | `http://localhost:8000/api` |
+- It works on both phones and computers.
+- Players who join do **not** need an account, only the owners sign in.
+- Your login stays active on your device until you log out.
 
-`VITE_*` variables are inlined at build time, so changing `VITE_API_URL`
-requires a rebuild/redeploy.
+## For developers
 
-## Scripts
-
-| Command           | Description                     |
-| ----------------- | ------------------------------- |
-| `npm run dev`     | Start the Vite dev server (HMR) |
-| `npm run build`   | Production build to `dist/`     |
-| `npm run preview` | Preview the production build    |
-
-## Project structure
-
-```
-src/
-  components/
-    auth/          Login form
-    dashboard/     Dashboard tabs (overview, history, session, members, owners)
-    layout/        Sidebar + mobile bottom nav
-    members/       Member row
-    session/       Session card, player/pending rows, share link
-    ui/            shadcn-vue primitives + shared widgets (Modal, Pagination, ...)
-  composables/     useAuth, useConfirm
-  layouts/         DashboardLayout
-  lib/             api.js (fetch client), validation.js (Zod), utils.js, charts.js
-  views/           Login, Join (public), Profile, MemberDetail, NotFound
-  router/          Route definitions + auth guard
-```
-
-## Authentication
-
-The owner logs in at `/login`; the API returns a JWT that is stored in
-`localStorage` and sent as a `Bearer` token by `src/lib/api.js`. A navigation
-guard redirects unauthenticated users to `/login`. The `/join` route is public
-so players can request to join a session via a shared link.
-
-## Deployment (Vercel)
-
-The app deploys as a static site. `vercel.json` rewrites all routes to
-`index.html` for SPA client-side routing. Set `VITE_API_URL` in the Vercel
-project's environment variables to the deployed backend URL.
+This folder is the app's front end (what you see in the browser), built with
+Vue 3 and Vite. The behind-the-scenes part lives on the
+[`backend`](https://github.com/adam-ctrlc/ballclub-app/tree/backend) branch.
+Setup and contribution steps are in [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ## License
 
-Apache License 2.0 - see [LICENSE](./LICENSE). Contributions welcome; see
-[CONTRIBUTING.md](./CONTRIBUTING.md).
+Free to use and build on under the Apache License 2.0. See [LICENSE](./LICENSE).
