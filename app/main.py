@@ -18,7 +18,17 @@ async def lifespan(app: FastAPI):
     yield
 
 
-app = FastAPI(title=settings.PROJECT_NAME, lifespan=lifespan)
+app = FastAPI(
+    title=settings.PROJECT_NAME,
+    description=(
+        "Backend API for MAB Sports Ballclub: owner authentication, session and "
+        "queue management with fees, capacity and metadata, member directory with "
+        "attendance history, owner accounts, dashboard stats and revenue, CSV export, "
+        "pagination, and a rate-limited public join flow."
+    ),
+    version="1.0.0",
+    lifespan=lifespan,
+)
 
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)

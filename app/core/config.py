@@ -6,7 +6,7 @@ INSECURE_JWT_SECRET = "change-me"
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
-    PROJECT_NAME: str = "Ballclub API"
+    PROJECT_NAME: str = "MAB Sports Ballclub API"
     CORS_ORIGINS: list[str] = ["http://localhost:5173", "http://127.0.0.1:5173"]
 
     MONGO_URI: str = "mongodb://localhost:27017"
