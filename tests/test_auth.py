@@ -99,3 +99,30 @@ async def test_change_password_rejects_short_new_password(client, auth_headers):
         json={"current_password": "test-password-123", "new_password": "short"},
     )
     assert res.status_code == 400
+
+
+async def test_username_suggestion_includes_name_digits_and_underscore(client, auth_headers):
+    res = await client.get(
+        "/api/auth/me/username-suggestion",
+        headers=auth_headers,
+        params={"first_name": "John Adam", "last_name": "Cuenca"},
+    )
+    assert res.status_code == 200
+    username = res.json()["username"]
+    assert username.startswith("john_cuenca_")
+    assert "_" in username
+    assert any(ch.isdigit() for ch in username)
+
+
+async def test_username_suggestion_requires_auth(client):
+    res = await client.get("/api/auth/me/username-suggestion", params={"first_name": "A", "last_name": "B"})
+    assert res.status_code == 401
+
+
+async def test_update_profile_rejects_invalid_username(client, auth_headers):
+    res = await client.patch(
+        "/api/auth/me/profile",
+        headers=auth_headers,
+        json={"username": "has spaces!", "first_name": "", "last_name": ""},
+    )
+    assert res.status_code == 400

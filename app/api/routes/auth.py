@@ -1,14 +1,15 @@
 from beanie import PydanticObjectId
 from beanie.exceptions import RevisionIdWasChanged
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from pydantic import BaseModel
 from pymongo.errors import DuplicateKeyError
 
 from app.api.deps import require_auth
 from app.core.rate_limit import limiter
 from app.core.security import create_access_token, hash_password, verify_password
-from app.core.validation import validate_name
+from app.core.validation import validate_name, validate_username
 from app.models.owner import Owner
+from app.services.usernames import generate_username
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -64,10 +65,22 @@ async def get_me(token_payload: dict = Depends(require_auth)):
     return MeOut(id=owner.id, username=owner.username, first_name=owner.first_name, last_name=owner.last_name)
 
 
+@router.get("/me/username-suggestion")
+async def username_suggestion(
+    first_name: str = Query(default=""),
+    last_name: str = Query(default=""),
+    _: dict = Depends(require_auth),
+):
+    return {"username": await generate_username(first_name, last_name)}
+
+
 @router.patch("/me/profile", response_model=MeOut)
 async def update_profile(payload: ProfileUpdateIn, token_payload: dict = Depends(require_auth)):
-    if len(payload.username.strip()) < 3:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Username must be at least 3 characters.")
+    if not validate_username(payload.username):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Username must be 3-30 characters and use only letters, numbers, dots, underscores, or hyphens.",
+        )
     if payload.first_name and not validate_name(payload.first_name):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid first name. Must be 2-100 characters.")
     if payload.last_name and not validate_name(payload.last_name):

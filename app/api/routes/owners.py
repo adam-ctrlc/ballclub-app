@@ -7,6 +7,7 @@ from pymongo.errors import DuplicateKeyError
 
 from app.api.deps import require_auth
 from app.core.security import hash_password
+from app.core.validation import validate_username
 from app.models.owner import Owner
 from app.services.activity import log_activity
 
@@ -42,8 +43,11 @@ def _serialize(owner: Owner) -> OwnerOut:
 
 
 def _validate(username: str, password: str) -> None:
-    if len(username.strip()) < 3:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Username must be at least 3 characters.")
+    if not validate_username(username):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Username must be 3-30 characters and use only letters, numbers, dots, underscores, or hyphens.",
+        )
     if len(password) < 8:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Password must be at least 8 characters.")
 

@@ -13,3 +13,12 @@ def validate_phone(phone: str | None) -> bool:
         return False
     digits = re.sub(r"\D", "", phone)
     return 10 <= len(digits) <= 15
+
+
+USERNAME_RE = re.compile(r"^[a-zA-Z0-9._-]{3,30}$")
+
+
+def validate_username(username: str | None) -> bool:
+    if not username or not isinstance(username, str):
+        return False
+    return bool(USERNAME_RE.match(username.strip()))
